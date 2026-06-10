@@ -1,245 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>C++ Debugging Master</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>C++ Debugging Master | Pro Edition</title>
 
-<style>
-:root{
-  --primary:#00f5ff;
-  --secondary:#7000ff;
-  --bg:#050816;
-}
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Poppins:wght@400;700&display=swap');
 
-body {
-  margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: var(--bg);
-  color: white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
+        :root {
+            --primary: #00ff88; /* أخضر نيون أساسي */
+            --primary-glow: rgba(0, 255, 136, 0.4);
+            --secondary: #004d33; /* أخضر غامق */
+            --bg: #020d08; /* خلفية سوداء مخضرة */
+            --card-bg: rgba(0, 20, 10, 0.7);
+            --text: #e0fff0;
+        }
 
-#startScreen {
-  position:fixed;
-  width:100%;
-  height:100%;
-  background: radial-gradient(circle at top right, #1a1f35, #050816);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  z-index:10;
-}
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 50% 50%, #002211 0%, #020d08 100%),
+                linear-gradient(rgba(0, 255, 136, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.05) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-.logo {
-  width:150px;
-  height:150px;
-  border-radius:20px;
-  overflow:hidden;
-  border:2px solid var(--primary);
-  box-shadow:0 0 30px rgba(0,245,255,0.3);
-  margin-bottom:25px;
-  transition:0.3s;
-}
+        /* شاشة البداية */
+        #startScreen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: 0.5s;
+        }
 
-.logo:hover{
-  transform:scale(1.05) rotate(3deg);
-}
+        .logo {
+            width: 160px;
+            height: 160px;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            overflow: hidden;
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 50px var(--primary-glow);
+            margin-bottom: 30px;
+            animation: morph 6s linear infinite alternate;
+        }
 
-.logo img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
+        @keyframes morph {
+            0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            100% { border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%; }
+        }
 
-h1 {
-  font-size: 2.5rem;
-  margin-bottom: 25px;
-  letter-spacing: 2px;
-  text-align:center;
-}
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-.btn-group{
-  display:flex;
-  gap:15px;
-}
+        h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+            color: var(--primary);
+            text-shadow: 0 0 20px var(--primary-glow);
+            text-align: center;
+        }
 
-.levelBtn {
-  padding: 14px 28px;
-  border: 1px solid var(--primary);
-  background: transparent;
-  color: white;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  transition:0.3s;
-  min-width:110px;
-}
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
 
-.levelBtn:hover {
-  background: var(--primary);
-  color: #000;
-  transform:scale(1.05);
-}
+        .levelBtn {
+            padding: 15px 35px;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
 
-.container {
-  display:none;
-  width: 90%;
-  max-width: 750px;
-  background: rgba(255,255,255,0.03);
-  padding: 35px;
-  border-radius: 30px;
-  border: 1px solid rgba(255,255,255,0.1);
-  backdrop-filter: blur(15px);
-  margin: 20px 0;
-}
+        .levelBtn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 0; height: 100%;
+            background: var(--primary);
+            transition: 0.4s;
+            z-index: -1;
+        }
 
-#lvTitle{
-  text-align:center;
-  color:var(--primary);
-}
+        .levelBtn:hover {
+            color: #000;
+            box-shadow: 0 0 30px var(--primary);
+        }
 
-.code-box {
-  background: #000;
-  padding: 20px;
-  border-radius: 15px;
-  font-family: 'Courier New', monospace;
-  white-space: pre;
-  border-left: 5px solid var(--secondary);
-  margin: 10px 0 20px 0;
-  color: #c1c1c1;
-}
+        .levelBtn:hover::before {
+            width: 100%;
+        }
 
-textarea {
-  width: 100%;
-  height: 70px;
-  background: #111;
-  border: 1px solid #333;
-  color: var(--primary);
-  border-radius: 10px;
-  padding: 10px;
-  box-sizing: border-box;
-  margin-bottom:10px;
-}
+        /* منطقة اللعبة */
+        .container {
+            display: none;
+            width: 90%;
+            max-width: 850px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            margin: 20px;
+        }
 
-.submitBtn {
-  margin-top: 10px;
-  width:100%;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  border: none;
-  padding: 15px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  color: white;
-  font-size:16px;
-}
+        #lvTitle {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--primary);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
 
-#overlay {
-  position:fixed;
-  top:0; left:0;
-  width:100%;
-  height:100%;
-  background: rgba(0,0,0,0.9);
-  display:none;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  z-index: 20;
-}
+        p {
+            font-weight: 600;
+            margin-top: 20px;
+            color: #afffd7;
+        }
 
-#finalText{
-  font-size:40px;
-  text-align:center;
-}
-</style>
+        .code-box {
+            background: #000;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: 'Fira Code', monospace;
+            white-space: pre-wrap;
+            border-left: 4px solid var(--primary);
+            margin: 15px 0;
+            color: #adffcf;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            box-shadow: inset 0 0 10px rgba(0, 255, 136, 0.1);
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            background: rgba(0, 40, 20, 0.5);
+            border: 1px solid #005533;
+            color: var(--primary);
+            border-radius: 12px;
+            padding: 15px;
+            box-sizing: border-box;
+            font-family: 'Fira Code', monospace;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .submitBtn {
+            margin-top: 30px;
+            width: 100%;
+            background: var(--primary);
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 800;
+            color: #020d08;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        .submitBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px var(--primary-glow);
+            filter: brightness(1.1);
+        }
+
+        /* شاشة النهاية */
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 10, 5, 0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            backdrop-filter: blur(10px);
+        }
+
+        #finalText {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+    </style>
 </head>
 
 <body>
 
 <div id="startScreen">
-  <div class="logo">
-    <img src="IMG_5131.JPG">
-  </div>
-  <h1>C++ Debugging Master</h1>
-  <div class="btn-group">
-    <button class="levelBtn" onclick="startGame('easy')">EASY</button>
-    <button class="levelBtn" onclick="startGame('medium')">MEDIUM</button>
-    <button class="levelBtn" onclick="startGame('hard')">HARD</button>
-  </div>
+    <div class="logo">
+        <!-- تأكد من وجود الصورة في نفس المسار أو استبدل الرابط -->
+        <img src="IMG_5131.JPG" alt="C++ Logo">
+    </div>
+    <h1>C++ DEBUGGER</h1>
+    <div class="btn-group">
+        <button class="levelBtn" onclick="startGame('easy')">INITIATE: EASY</button>
+        <button class="levelBtn" onclick="startGame('medium')">SYSTEM: MEDIUM</button>
+        <button class="levelBtn" onclick="startGame('hard')">CORE: HARD</button>
+    </div>
 </div>
 
 <div class="container" id="game">
-  <h2 id="lvTitle">Level</h2>
-  <p>Syntax Error (Missing Semicolon):</p>
-  <div class="code-box" id="code1"></div>
-  <textarea id="ans1" placeholder="Fix syntax..."></textarea>
-  <p>Logic Error (Wrong Condition):</p>
-  <div class="code-box" id="code2"></div>
-  <textarea id="ans2" placeholder="Fix logic..."></textarea>
-  <button class="submitBtn" onclick="check()">SUBMIT ANSWER</button>
+    <div id="lvTitle">LEVEL: INITIALIZING...</div>
+    
+    <p>⚡ Syntax Error (Fix the missing parts):</p>
+    <div class="code-box" id="code1"></div>
+    <textarea id="ans1" placeholder="Type the corrected line here..."></textarea>
+    
+    <p>🧠 Logic Error (Fix the logical flow):</p>
+    <div class="code-box" id="code2"></div>
+    <textarea id="ans2" placeholder="Type the corrected logic here..."></textarea>
+    
+    <button class="submitBtn" onclick="check()">EXECUTE SOLUTIONS</button>
 </div>
 
 <div id="overlay">
-  <h1 id="finalText"></h1>
-  <button class="levelBtn" onclick="location.reload()">Play Again</button>
+    <h1 id="finalText"></h1>
+    <button class="levelBtn" onclick="location.reload()">REBOOT SYSTEM</button>
 </div>
 
 <script>
-let level="easy";
+    let level = "easy";
 
-function startGame(lv){
-  level=lv;
-  document.getElementById("startScreen").style.display="none";
-  document.getElementById("game").style.display="block";
-  document.getElementById("lvTitle").innerText = "Level: " + lv.toUpperCase();
-  loadLevel();
-}
+    function startGame(lv) {
+        level = lv;
+        document.getElementById("startScreen").style.opacity = "0";
+        setTimeout(() => {
+            document.getElementById("startScreen").style.display = "none";
+            document.getElementById("game").style.display = "block";
+            document.getElementById("lvTitle").innerText = "ACTIVE LEVEL: " + lv.toUpperCase();
+            loadLevel();
+        }, 500);
+    }
 
-function loadLevel(){
-  if(level==="easy"){
-    document.getElementById("code1").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int x = 10\n    cout << x;\n    return 0;\n}`;
-    // الخطأ المنطقي: العمر 20 يجب أن يكون Adult، لكن الشرط > 20 يجعله Child
-    document.getElementById("code2").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int age = 20;\n    if(age > 20) cout << "Adult";\n    else cout << "Child";\n    return 0;\n}`;
-  }
-  else if(level==="medium"){
-    document.getElementById("code1").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int x = 5\n    cout << x;\n    return 0;\n}`;
-    document.getElementById("code2").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int sum = 0;\n    for(int i = 1; i <= 5; i++){\n        sum = i;\n    }\n    cout << sum;\n    return 0;\n}`;
-  }
-  else{
-    document.getElementById("code1").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    for(int i = 0 i < 5; i++){\n        cout << i << endl;\n    }\n    return 0;\n}`;
-    document.getElementById("code2").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int arr[3] = {1,2,3};\n    cout << arr[3];\n    return 0;\n}`;
-  }
-}
+    function loadLevel() {
+        if(level === "easy") {
+            document.getElementById("code1").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int x = 10\n    cout << x;\n    return 0;\n}`;
+            document.getElementById("code2").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int age = 20;\n    if(age > 20) cout << "Adult";\n    else cout << "Child";\n    return 0;\n}`;
+        }
+        else if(level === "medium") {
+            document.getElementById("code1").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int x = 5\n    cout << x;\n    return 0;\n}`;
+            document.getElementById("code2").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int sum = 0;\n    for(int i = 1; i <= 5; i++){\n        sum = i;\n    }\n    cout << sum;\n    return 0;\n}`;
+        }
+        else {
+            document.getElementById("code1").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    for(int i = 0 i < 5; i++){\n        cout << i << endl;\n    }\n    return 0;\n}`;
+            document.getElementById("code2").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int arr[3] = {1,2,3};\n    cout << arr[3];\n    return 0;\n}`;
+        }
+    }
 
-function normalize(t){ return t.replace(/\s/g,'').toLowerCase(); }
+    function normalize(t) { return t.replace(/\s/g,'').toLowerCase(); }
 
-function check(){
-  let a1 = normalize(document.getElementById("ans1").value);
-  let a2 = normalize(document.getElementById("ans2").value);
-  let ok=false;
+    function check() {
+        let a1 = normalize(document.getElementById("ans1").value);
+        let a2 = normalize(document.getElementById("ans2").value);
+        let ok = false;
 
-  if(level==="easy"){ 
-    // يجب تصحيح الفاصلة المنقوطة، وتغيير الشرط ليشمل الـ 20
-    ok = a1.includes("intx=10;") && (a2.includes("age>=20") || a2.includes("age>19")); 
-  }
-  else if(level==="medium"){ 
-    ok = a1.includes("intx=5;") && a2.includes("sum+=i"); 
-  }
-  else{ 
-    ok = a1.includes("i=0;i<5") && a2.includes("arr[2]"); 
-  }
+        if(level === "easy") { 
+            ok = a1.includes("intx=10;") && (a2.includes("age>=20") || a2.includes("age>19")); 
+        }
+        else if(level === "medium") { 
+            ok = a1.includes("intx=5;") && a2.includes("sum+=i"); 
+        }
+        else { 
+            ok = (a1.includes("i=0;i<5") || a1.includes("i=0;i<5;")) && a2.includes("arr[2]"); 
+        }
 
-  document.getElementById("overlay").style.display="flex";
-  document.getElementById("finalText").innerText = ok ? "🎉 YOU WIN!" : "❌ TRY AGAIN";
-  document.getElementById("finalText").style.color = ok ? "#22c55e" : "#ef4444";
-}
+        document.getElementById("overlay").style.display = "flex";
+        const finalText = document.getElementById("finalText");
+        
+        if(ok) {
+            finalText.innerText = "ACCESS GRANTED\nMISSION SUCCESS";
+            finalText.style.color = var(--primary);
+            finalText.style.textShadow = "0 0 30px var(--primary)";
+        } else {
+            finalText.innerText = "ACCESS DENIED\nSYSTEM FAILURE";
+            finalText.style.color = "#ff3333";
+            finalText.style.textShadow = "0 0 30px #ff3333";
+        }
+    }
 </script>
+
 </body>
 </html>
