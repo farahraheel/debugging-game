@@ -4,198 +4,222 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>C++ Debugging Game</title>
+
 <style>
-    :root {
-        --primary: #00f5ff;
-        --secondary: #a855f7;
-        --bg: #050816;
-    }
+:root {
+    --primary: #00f5ff;
+    --secondary: #a855f7;
+    --bg: #050816;
+}
 
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: var(--bg);
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-    }
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
 
-    /* ===== Start Screen ===== */
-    #startScreen {
-        position: fixed;
-        width: 100%; height: 100%;
-        background: radial-gradient(circle at center, #1a1f35 0%, #050816 100%);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        text-align: center;
-        padding: 20px;
-    }
+/* ===== Start Screen ===== */
+#startScreen {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #1a1f35, #050816);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
 
-    .logo-placeholder {
-        width: 150px;
-        height: 150px;
-        background: rgba(255,255,255,0.1);
-        border-radius: 50%;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border: 2px solid var(--primary);
-    }
+#startScreen h1 {
+    font-size: 3rem;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-    #startScreen h1 {
-        font-size: 3rem;
-        background: linear-gradient(to right, var(--primary), var(--secondary));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 10px;
-    }
+#startBtn {
+    margin-top: 20px;
+    padding: 15px 50px;
+    border: none;
+    border-radius: 30px;
+    font-size: 18px;
+    cursor: pointer;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    color: white;
+    transition: 0.3s;
+}
 
-    #startBtn {
-        padding: 15px 50px;
-        border: none;
-        border-radius: 30px;
-        font-size: 20px;
-        font-weight: bold;
-        cursor: pointer;
-        background: linear-gradient(90deg, var(--primary), var(--secondary));
-        color: white;
-        transition: transform 0.3s, box-shadow 0.3s;
-        box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
-    }
+#startBtn:hover {
+    transform: scale(1.05);
+}
 
-    #startBtn:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 30px rgba(0, 245, 255, 0.6);
-    }
+/* ===== Game ===== */
+.container {
+    display: none;
+    width: 90%;
+    max-width: 850px;
+    background: rgba(11, 16, 35, 0.85);
+    border-radius: 25px;
+    padding: 35px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+}
 
-    /* ===== Game Container ===== */
-    .container {
-        display: none;
-        width: 90%;
-        max-width: 800px;
-        background: rgba(11, 16, 35, 0.8);
-        border: 1px solid rgba(255,255,255,0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 25px;
-        padding: 40px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
+.code-box {
+    background: #000;
+    padding: 20px;
+    border-radius: 12px;
+    font-family: Consolas;
+    white-space: pre;
+    text-align: left;
+    border-left: 4px solid var(--primary);
+    margin-bottom: 10px;
+}
 
-    .code-box {
-        background: #000;
-        padding: 20px;
-        border-radius: 15px;
-        font-family: 'Courier New', Courier, monospace;
-        white-space: pre;
-        direction: ltr;
-        border-left: 5px solid var(--primary);
-        margin: 15px 0;
-        font-size: 16px;
-    }
+textarea {
+    width: 100%;
+    height: 90px;
+    border-radius: 10px;
+    border: none;
+    padding: 10px;
+    background: #1a1f35;
+    color: var(--primary);
+    margin-bottom: 15px;
+}
 
-    textarea {
-        width: 100%;
-        height: 80px;
-        box-sizing: border-box;
-        border-radius: 10px;
-        border: 1px solid #333;
-        padding: 15px;
-        background: #1a1f35;
-        color: var(--primary);
-        font-size: 16px;
-        margin-bottom: 20px;
-    }
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
 
-    button {
-        width: 100%;
-        padding: 15px;
-        border-radius: 12px;
-        border: none;
-        background: linear-gradient(90deg, var(--primary), var(--secondary));
-        color: white;
-        font-weight: bold;
-        cursor: pointer;
-    }
+/* ===== Overlay ===== */
+#overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 30px;
+    text-align: center;
+}
 
-    #overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.95);
-        display: none;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 100;
-    }
+#overlay button {
+    width: 200px;
+    margin-top: 20px;
+}
 </style>
 </head>
+
 <body>
 
+<!-- START -->
 <div id="startScreen">
-    <img src="path-to-your-logo.png" alt="Logo" class="logo-placeholder" style="object-fit: contain;">
-    <h1>C++ Debugging Challenge</h1>
-    <p>اختبر مهاراتك في كشف الأخطاء البرمجية</p>
-    <button id="startBtn" onclick="startGame()">ابدأ التحدي</button>
+    <h1>💻 C++ Debugging Game</h1>
+    <p>اختبر مهاراتك في تصحيح الأخطاء</p>
+    <button id="startBtn" onclick="startGame()">ابدأ اللعبة</button>
 </div>
 
+<!-- GAME -->
 <div class="container" id="game">
-    <h1 style="margin-top:0">تحدي التصحيح ⚡</h1>
-    
-    <p>1. صحح الخطأ النحوي (Syntax Error):</p>
-    <div class="code-box" id="code1"></div>
-    <textarea id="ans1" placeholder="اكتب الكود الصحيح هنا..."></textarea>
 
-    <p>2. صحح الخطأ المنطقي (Logic Error):</p>
-    <div class="code-box" id="code2"></div>
-    <textarea id="ans2" placeholder="اكتب الكود الصحيح هنا..."></textarea>
+<h1 style="text-align:center;">⚡ Debugging Challenge</h1>
 
-    <button onclick="check()">تحقق من الإجابة</button>
+<p>🟥 الخطأ النحوي:</p>
+<div class="code-box" id="code1"></div>
+<textarea id="ans1" placeholder="اكتب التصحيح هنا..."></textarea>
+
+<p>🟨 الخطأ المنطقي:</p>
+<div class="code-box" id="code2"></div>
+<textarea id="ans2" placeholder="اكتب التصحيح هنا..."></textarea>
+
+<button onclick="check()">تحقق</button>
+
 </div>
 
+<!-- RESULT -->
 <div id="overlay">
-    <h2 id="finalText" style="font-size: 50px;"></h2>
-    <button style="width: 200px;" onclick="location.reload()">محاولة أخرى</button>
+    <div id="finalText"></div>
+    <button onclick="location.reload()">إعادة اللعب</button>
 </div>
 
 <script>
-    function startGame(){
-        document.getElementById("startScreen").style.display = "none";
-        document.getElementById("game").style.display = "block";
+
+function startGame(){
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("game").style.display = "block";
+}
+
+function normalize(text){
+    return text.replace(/\s/g,'');
+}
+
+function showResult(win){
+    document.getElementById("overlay").style.display = "flex";
+    const text = document.getElementById("finalText");
+
+    text.innerHTML = win ? "🎉 لقد ربحت! تهانينا" : "❌ لم تفز حاول مجدداً";
+    text.style.color = win ? "#22c55e" : "#ef4444";
+}
+
+/* ===== SMART CHECK ===== */
+function check(){
+
+let a1 = normalize(document.getElementById("ans1").value);
+let a2 = normalize(document.getElementById("ans2").value);
+
+/* Syntax: لازم يحتوي cout + ; */
+let syntaxCorrect =
+    a1.includes("cout<<\"HelloWorld\";") ||
+    a1.includes("cout<<\"HelloWorld\"");
+
+/* Logic: لازم يحتوي جمع */
+let logicCorrect =
+    a2.includes("sum+=i");
+
+if(syntaxCorrect && logicCorrect){
+    showResult(true);
+}else{
+    showResult(false);
+}
+}
+
+/* ===== QUESTIONS ===== */
+document.getElementById("code1").innerText =
+`#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello World"
+    return 0;
+}`;
+
+document.getElementById("code2").innerText =
+`#include <iostream>
+using namespace std;
+
+int main() {
+    int sum = 0;
+    for(int i = 1; i <= 5; i++){
+        sum = i;
     }
+    cout << sum;
+    return 0;
+}`;
 
-    function normalize(text){
-        return text.replace(/\s/g,'');
-    }
-
-    function showResult(win){
-        document.getElementById("overlay").style.display = "flex";
-        const text = document.getElementById("finalText");
-        text.innerHTML = win ? "🎉 مبروك! إجابة صحيحة" : "❌ خطأ، حاول مجدداً";
-        text.style.color = win ? "#22c55e" : "#ef4444";
-    }
-
-    function check(){
-        let a1 = normalize(document.getElementById("ans1").value);
-        let a2 = normalize(document.getElementById("ans2").value);
-        
-        // الأجوبة الصحيحة
-        let syntaxAnswer = normalize(`#include <iostream>\nusing namespace std;\nint main() {\ncout << "Hello World";\nreturn 0;\n}`);
-        let logicAnswer = normalize(`#include <iostream>\nusing namespace std;\nint main() {\nint sum = 0;\nfor(int i = 1; i <= 5; i++){\nsum += i;\n}\ncout << sum;\nreturn 0;\n}`);
-
-        if(a1 === syntaxAnswer && a2 === logicAnswer){
-            showResult(true);
-        }else{
-            showResult(false);
-        }
-    }
-
-    document.getElementById("code1").innerText = `#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello World"\n    return 0;\n}`;
-    document.getElementById("code2").innerText = `#include <iostream>\nusing namespace std;\n\nint main() {\n    int sum = 0;\n    for(int i = 1; i <= 5; i++){\n        sum = i;\n    }\n    cout << sum;\n    return 0;\n}`;
 </script>
 
 </body>
