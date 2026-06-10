@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>C++ Debugging Game</title>
+<title>C++ Debugging Master</title>
 
 <style>
 :root{
@@ -21,7 +21,9 @@ body {
   justify-content:center;
   align-items:center;
   min-height:100vh;
-  overflow:hidden;
+  /* تم التعديل هنا للسماح بالتمرير العمودي */
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* ===== START SCREEN ===== */
@@ -99,6 +101,7 @@ h1 {
   border-radius: 30px;
   border: 1px solid rgba(255,255,255,0.1);
   backdrop-filter: blur(15px);
+  margin: 20px 0; /* إضافة مساحة للمحتوى الطويل */
 }
 
 #lvTitle{
@@ -145,6 +148,7 @@ textarea {
 /* ===== RESULT ===== */
 #overlay {
   position:fixed;
+  top:0; left:0;
   width:100%;
   height:100%;
   background: rgba(0,0,0,0.9);
@@ -152,60 +156,47 @@ textarea {
   flex-direction:column;
   justify-content:center;
   align-items:center;
+  z-index: 20;
 }
 
 #finalText{
   font-size:40px;
   text-align:center;
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- START SCREEN -->
 <div id="startScreen">
-
   <div class="logo">
     <img src="IMG_5131.JPG">
   </div>
-
   <h1>C++ Debugging Master</h1>
-
   <div class="btn-group">
     <button class="levelBtn" onclick="startGame('easy')">EASY</button>
     <button class="levelBtn" onclick="startGame('medium')">MEDIUM</button>
     <button class="levelBtn" onclick="startGame('hard')">HARD</button>
   </div>
-
 </div>
 
-<!-- GAME -->
 <div class="container" id="game">
-
   <h2 id="lvTitle">Level</h2>
-
   <p>Syntax Error:</p>
   <div class="code-box" id="code1"></div>
-  <textarea id="ans1"></textarea>
-
+  <textarea id="ans1" placeholder="Fix syntax..."></textarea>
   <p>Logic Error:</p>
   <div class="code-box" id="code2"></div>
-  <textarea id="ans2"></textarea>
-
+  <textarea id="ans2" placeholder="Fix logic..."></textarea>
   <button class="submitBtn" onclick="check()">SUBMIT ANSWER</button>
-
 </div>
 
-<!-- RESULT -->
 <div id="overlay">
   <h1 id="finalText"></h1>
   <button class="levelBtn" onclick="location.reload()">Play Again</button>
 </div>
 
 <script>
-
 let level="easy";
 
 function startGame(lv){
@@ -216,128 +207,36 @@ function startGame(lv){
   loadLevel();
 }
 
-/* ===== LEVELS (FIXED) ===== */
 function loadLevel(){
-
-if(level==="easy"){
-
-document.getElementById("code1").innerText =
-`#include <iostream>
-using namespace std;
-
-int main() {
-    int x = 10
-    cout << x;
-    return 0;
-}`;
-
-document.getElementById("code2").innerText =
-`#include <iostream>
-using namespace std;
-
-int main() {
-    int age = 20;
-    if(age > 18) cout << "Adult";
-    else cout << "Child";
-    return 0;
-}`;
+  if(level==="easy"){
+    document.getElementById("code1").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int x = 10\n    cout << x;\n    return 0;\n}`;
+    document.getElementById("code2").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int age = 20;\n    if(age > 18) cout << "Adult";\n    else cout << "Child";\n    return 0;\n}`;
+  }
+  else if(level==="medium"){
+    document.getElementById("code1").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int x = 5\n    cout << x;\n    return 0;\n}`;
+    document.getElementById("code2").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int sum = 0;\n    for(int i = 1; i <= 5; i++){\n        sum = i;\n    }\n    cout << sum;\n    return 0;\n}`;
+  }
+  else{
+    document.getElementById("code1").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    for(int i = 0 i < 5; i++){\n        cout << i << endl;\n    }\n    return 0;\n}`;
+    document.getElementById("code2").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int arr[3] = {1,2,3};\n    cout << arr[3];\n    return 0;\n}`;
+  }
 }
 
-else if(level==="medium"){
-
-document.getElementById("code1").innerText =
-`#include <iostream>
-using namespace std;
-
-int main() {
-    int x = 5
-    cout << x;
-    return 0;
-}`;
-
-document.getElementById("code2").innerText =
-`#include <iostream>
-using namespace std;
-
-int main() {
-    int sum = 0;
-    for(int i = 1; i <= 5; i++){
-        sum = i;
-    }
-    cout << sum;
-    return 0;
-}`;
-}
-
-else{
-
-document.getElementById("code1").innerText =
-`#include <iostream>
-using namespace std;
-
-int main() {
-    for(int i = 0 i < 5; i++){
-        cout << i << endl;
-    }
-    return 0;
-}`;
-
-document.getElementById("code2").innerText =
-`#include <iostream>
-using namespace std;
-
-int main() {
-    int arr[3] = {1,2,3};
-    cout << arr[3];
-    return 0;
-}`;
-}
-}
-
-/* ===== CHECK (FIXED) ===== */
-function normalize(t){
-return t.replace(/\s/g,'').toLowerCase();
-}
+function normalize(t){ return t.replace(/\s/g,'').toLowerCase(); }
 
 function check(){
+  let a1 = normalize(document.getElementById("ans1").value);
+  let a2 = normalize(document.getElementById("ans2").value);
+  let ok=false;
 
-let a1 = normalize(document.getElementById("ans1").value);
-let a2 = normalize(document.getElementById("ans2").value);
+  if(level==="easy"){ ok = a1.includes("intx=10;") && a2.includes("age>=18"); }
+  else if(level==="medium"){ ok = a1.includes("intx=5;") && a2.includes("sum+=i"); }
+  else{ ok = a1.includes("i=0;i<5") && a2.includes("arr[2]"); }
 
-let ok=false;
-
-/* EASY */
-if(level==="easy"){
-ok =
-a1.includes("intx=10") &&
-a2.includes("age>18");
+  document.getElementById("overlay").style.display="flex";
+  document.getElementById("finalText").innerText = ok ? "🎉 YOU WIN!" : "❌ TRY AGAIN";
+  document.getElementById("finalText").style.color = ok ? "#22c55e" : "#ef4444";
 }
-
-/* MEDIUM */
-else if(level==="medium"){
-ok =
-a1.includes("intx=5") &&
-a2.includes("sum+=i");
-}
-
-/* HARD */
-else{
-ok =
-a1.includes("for(inti=0;i<5;i++)") &&
-a2.includes("arr[2]");
-}
-
-/* RESULT */
-document.getElementById("overlay").style.display="flex";
-document.getElementById("finalText").innerText =
-ok ? "🎉 YOU WIN!" : "❌ TRY AGAIN";
-
-document.getElementById("finalText").style.color =
-ok ? "#22c55e" : "#ef4444";
-
-}
-
 </script>
-
 </body>
 </html>
