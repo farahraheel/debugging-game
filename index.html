@@ -15,7 +15,7 @@
 body{
   margin:0;
   font-family: Arial, sans-serif;
-  background:var(--bg);
+  background: radial-gradient(circle,#0b1023,#050816);
   color:white;
   display:flex;
   justify-content:center;
@@ -23,17 +23,38 @@ body{
   min-height:100vh;
 }
 
-/* ===== START SCREEN ===== */
+/* ================= START SCREEN ================= */
 #startScreen{
   position:fixed;
   width:100%;
   height:100%;
-  background:radial-gradient(circle,#1a1f35,#050816);
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
   text-align:center;
+  background: radial-gradient(circle at top,#1a1f35,#050816);
+}
+
+/* LOGO */
+.logo{
+  width:140px;
+  height:140px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.05);
+  border:2px solid var(--primary);
+  box-shadow:0 0 30px rgba(0,245,255,0.3);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-bottom:20px;
+  overflow:hidden;
+}
+
+.logo img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
 }
 
 #startScreen h1{
@@ -41,27 +62,37 @@ body{
   background:linear-gradient(90deg,var(--primary),var(--secondary));
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
+  margin:0;
 }
 
 .levelBtn{
   padding:12px 25px;
   margin:8px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   cursor:pointer;
   font-weight:bold;
   background:linear-gradient(90deg,var(--primary),var(--secondary));
   color:white;
+  box-shadow:0 0 20px rgba(0,245,255,0.2);
+  transition:0.3s;
 }
 
-/* ===== GAME ===== */
+.levelBtn:hover{
+  transform:scale(1.05);
+}
+
+/* ================= GAME ================= */
 .container{
   display:none;
   width:90%;
   max-width:850px;
-  background:rgba(11,16,35,0.85);
+  background:rgba(255,255,255,0.05);
+  backdrop-filter: blur(15px);
+  border:1px solid rgba(255,255,255,0.1);
   padding:30px;
   border-radius:20px;
+  box-shadow:0 0 40px rgba(0,245,255,0.1);
 }
 
 .code-box{
@@ -75,6 +106,7 @@ body{
   margin-bottom:10px;
 }
 
+/* ================= TEXTAREA ================= */
 textarea{
   width:100%;
   height:90px;
@@ -87,37 +119,76 @@ textarea{
   text-align:left;
 }
 
+/* ================= BUTTON ================= */
 button{
   width:100%;
   padding:15px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   cursor:pointer;
   background:linear-gradient(90deg,var(--primary),var(--secondary));
   color:white;
   font-size:18px;
+  font-weight:bold;
 }
 
-/* RESULT */
+/* ================= RESULT OVERLAY ================= */
 #overlay{
   position:fixed;
   width:100%;
   height:100%;
-  background:rgba(0,0,0,0.9);
+  background:rgba(0,0,0,0.85);
   display:none;
   justify-content:center;
   align-items:center;
   flex-direction:column;
-  font-size:28px;
   text-align:center;
+  animation: fadeIn 0.5s ease;
 }
+
+/* RESULT BOX */
+.resultBox{
+  padding:40px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.2);
+  box-shadow:0 0 40px rgba(0,245,255,0.2);
+  animation: pop 0.4s ease;
+}
+
+@keyframes pop{
+  from{transform:scale(0.5);opacity:0;}
+  to{transform:scale(1);opacity:1;}
+}
+
+@keyframes fadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+.win{
+  color:#22c55e;
+  font-size:32px;
+}
+
+.lose{
+  color:#ef4444;
+  font-size:32px;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- START SCREEN -->
+<!-- ================= START SCREEN ================= -->
 <div id="startScreen">
+
+  <!-- LOGO (ضع شعارك هنا) -->
+  <div class="logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg" />
+  </div>
+
   <h1>C++ Debugging Game</h1>
   <p>Select Level</p>
 
@@ -126,10 +197,10 @@ button{
   <button class="levelBtn" onclick="startGame('hard')">Hard</button>
 </div>
 
-<!-- GAME -->
+<!-- ================= GAME ================= -->
 <div class="container" id="game">
 
-<h2>Debugging Challenge</h2>
+<h2>Debugging Challenge ⚡</h2>
 
 <p>Syntax Error:</p>
 <div class="code-box" id="code1"></div>
@@ -143,30 +214,31 @@ button{
 
 </div>
 
-<!-- RESULT -->
+<!-- ================= RESULT ================= -->
 <div id="overlay">
-  <div id="finalText"></div>
-  <button onclick="location.reload()" style="width:200px;margin-top:20px;">
-    Play Again
-  </button>
+  <div class="resultBox">
+    <div id="finalText"></div>
+    <button onclick="location.reload()" style="margin-top:20px;width:200px;">
+      Play Again
+    </button>
+  </div>
 </div>
 
 <script>
 
-let level = "easy";
+let level="easy";
 
-/* ===== START GAME ===== */
 function startGame(lv){
-  level = lv;
+  level=lv;
   document.getElementById("startScreen").style.display="none";
   document.getElementById("game").style.display="block";
   loadLevel();
 }
 
-/* ===== LEVEL DATA ===== */
+/* ===== LEVELS ===== */
 function loadLevel(){
 
-if(level === "easy"){
+if(level==="easy"){
 
 document.getElementById("code1").innerText =
 `#include <iostream>
@@ -187,10 +259,9 @@ int main() {
     cout << sum;
     return 0;
 }`;
-
 }
 
-else if(level === "medium"){
+else if(level==="medium"){
 
 document.getElementById("code1").innerText =
 `#include <iostream>
@@ -214,10 +285,9 @@ int main() {
     cout << sum;
     return 0;
 }`;
-
 }
 
-else if(level === "hard"){
+else{
 
 document.getElementById("code1").innerText =
 `#include <iostream>
@@ -239,51 +309,50 @@ int main() {
     cout << arr[3];
     return 0;
 }`;
-
 }
-
 }
 
 /* ===== CHECK ===== */
 function normalize(t){
-return t.replace(/\s/g,'');
+return t.replace(/\s/g,'').toLowerCase();
 }
 
 function check(){
 
-let a1 = normalize(document.getElementById("ans1").value);
-let a2 = normalize(document.getElementById("ans2").value);
+let a1=normalize(document.getElementById("ans1").value);
+let a2=normalize(document.getElementById("ans2").value);
 
-let ok = false;
+let ok=false;
 
-/* EASY */
 if(level==="easy"){
 ok =
-a1.includes('cout<<"HelloWorld";') &&
+a1.includes('cout<<"helloworld"') &&
 a2.includes('sum=1+2+3+4+5');
 }
 
-/* MEDIUM */
 else if(level==="medium"){
 ok =
-a1.includes('intx=5;') &&
+a1.includes('intx=5') &&
 a2.includes('sum+=i');
 }
 
-/* HARD */
-else if(level==="hard"){
+else{
 ok =
 a1.includes('for(inti=0;i<5;i++)') &&
 a2.includes('arr[2]');
 }
 
-/* RESULT */
-document.getElementById("overlay").style.display="flex";
-document.getElementById("finalText").innerHTML =
-ok ? "🎉 YOU WIN!" : "❌ TRY AGAIN";
+showResult(ok);
+}
 
-document.getElementById("finalText").style.color =
-ok ? "#22c55e" : "#ef4444";
+function showResult(win){
+
+document.getElementById("overlay").style.display="flex";
+
+document.getElementById("finalText").className = win ? "win" : "lose";
+
+document.getElementById("finalText").innerHTML =
+win ? "🎉 YOU WIN!" : "❌ TRY AGAIN";
 
 }
 
