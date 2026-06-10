@@ -1,203 +1,173 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>C++ Debugging Game</title>
 
 <style>
-:root {
-    --primary: #00f5ff;
-    --secondary: #a855f7;
-    --bg: #050816;
+:root{
+  --primary:#00f5ff;
+  --secondary:#a855f7;
+  --bg:#050816;
 }
 
-body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--bg);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:var(--bg);
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
 }
 
-/* ===== Start Screen ===== */
-#startScreen {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at center, #1a1f35, #050816);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+/* ===== START SCREEN ===== */
+#startScreen{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:radial-gradient(circle,#1a1f35,#050816);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
 }
 
-#startScreen h1 {
-    font-size: 3rem;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+#startScreen h1{
+  font-size:3rem;
+  background:linear-gradient(90deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 
-#startBtn {
-    margin-top: 20px;
-    padding: 15px 50px;
-    border: none;
-    border-radius: 30px;
-    font-size: 18px;
-    cursor: pointer;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
-    color: white;
-    transition: 0.3s;
+.levelBtn{
+  padding:12px 25px;
+  margin:8px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+  background:linear-gradient(90deg,var(--primary),var(--secondary));
+  color:white;
 }
 
-#startBtn:hover {
-    transform: scale(1.05);
+/* ===== GAME ===== */
+.container{
+  display:none;
+  width:90%;
+  max-width:850px;
+  background:rgba(11,16,35,0.85);
+  padding:30px;
+  border-radius:20px;
 }
 
-/* ===== Game ===== */
-.container {
-    display: none;
-    width: 90%;
-    max-width: 850px;
-    background: rgba(11, 16, 35, 0.85);
-    border-radius: 25px;
-    padding: 35px;
-    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+.code-box{
+  background:#000;
+  padding:15px;
+  border-radius:10px;
+  font-family: Consolas;
+  white-space:pre;
+  text-align:left;
+  border-left:4px solid var(--primary);
+  margin-bottom:10px;
 }
 
-.code-box {
-    background: #000;
-    padding: 20px;
-    border-radius: 12px;
-    font-family: Consolas;
-    white-space: pre;
-    text-align: left;
-    border-left: 4px solid var(--primary);
-    margin-bottom: 10px;
+textarea{
+  width:100%;
+  height:90px;
+  padding:10px;
+  margin-bottom:10px;
+  background:#1a1f35;
+  border:none;
+  color:white;
+  border-radius:10px;
+  text-align:left;
 }
 
-textarea {
-    width: 100%;
-    height: 90px;
-    border-radius: 10px;
-    border: none;
-    padding: 10px;
-    background: #1a1f35;
-    color: var(--primary);
-    margin-bottom: 15px;
+button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  background:linear-gradient(90deg,var(--primary),var(--secondary));
+  color:white;
+  font-size:18px;
 }
 
-button {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 12px;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-/* ===== Overlay ===== */
-#overlay {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.9);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    font-size: 30px;
-    text-align: center;
-}
-
-#overlay button {
-    width: 200px;
-    margin-top: 20px;
+/* RESULT */
+#overlay{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.9);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  font-size:28px;
+  text-align:center;
 }
 </style>
 </head>
 
 <body>
 
-<!-- START -->
+<!-- START SCREEN -->
 <div id="startScreen">
-    <h1>💻 C++ Debugging Game</h1>
-    <p>اختبر مهاراتك في تصحيح الأخطاء</p>
-    <button id="startBtn" onclick="startGame()">ابدأ اللعبة</button>
+  <h1>C++ Debugging Game</h1>
+  <p>Select Level</p>
+
+  <button class="levelBtn" onclick="startGame('easy')">Easy</button>
+  <button class="levelBtn" onclick="startGame('medium')">Medium</button>
+  <button class="levelBtn" onclick="startGame('hard')">Hard</button>
 </div>
 
 <!-- GAME -->
 <div class="container" id="game">
 
-<h1 style="text-align:center;">⚡ Debugging Challenge</h1>
+<h2>Debugging Challenge</h2>
 
-<p>🟥 الخطأ النحوي:</p>
+<p>Syntax Error:</p>
 <div class="code-box" id="code1"></div>
-<textarea id="ans1" placeholder="اكتب التصحيح هنا..."></textarea>
+<textarea id="ans1" placeholder="Fix syntax error..."></textarea>
 
-<p>🟨 الخطأ المنطقي:</p>
+<p>Logic Error:</p>
 <div class="code-box" id="code2"></div>
-<textarea id="ans2" placeholder="اكتب التصحيح هنا..."></textarea>
+<textarea id="ans2" placeholder="Fix logic error..."></textarea>
 
-<button onclick="check()">تحقق</button>
+<button onclick="check()">Submit</button>
 
 </div>
 
 <!-- RESULT -->
 <div id="overlay">
-    <div id="finalText"></div>
-    <button onclick="location.reload()">إعادة اللعب</button>
+  <div id="finalText"></div>
+  <button onclick="location.reload()" style="width:200px;margin-top:20px;">
+    Play Again
+  </button>
 </div>
 
 <script>
 
-function startGame(){
-    document.getElementById("startScreen").style.display = "none";
-    document.getElementById("game").style.display = "block";
+let level = "easy";
+
+/* ===== START GAME ===== */
+function startGame(lv){
+  level = lv;
+  document.getElementById("startScreen").style.display="none";
+  document.getElementById("game").style.display="block";
+  loadLevel();
 }
 
-function normalize(text){
-    return text.replace(/\s/g,'');
-}
+/* ===== LEVEL DATA ===== */
+function loadLevel(){
 
-function showResult(win){
-    document.getElementById("overlay").style.display = "flex";
-    const text = document.getElementById("finalText");
+if(level === "easy"){
 
-    text.innerHTML = win ? "🎉 لقد ربحت! تهانينا" : "❌ لم تفز حاول مجدداً";
-    text.style.color = win ? "#22c55e" : "#ef4444";
-}
-
-/* ===== SMART CHECK ===== */
-function check(){
-
-let a1 = normalize(document.getElementById("ans1").value);
-let a2 = normalize(document.getElementById("ans2").value);
-
-/* Syntax: لازم يحتوي cout + ; */
-let syntaxCorrect =
-    a1.includes("cout<<\"HelloWorld\";") ||
-    a1.includes("cout<<\"HelloWorld\"");
-
-/* Logic: لازم يحتوي جمع */
-let logicCorrect =
-    a2.includes("sum+=i");
-
-if(syntaxCorrect && logicCorrect){
-    showResult(true);
-}else{
-    showResult(false);
-}
-}
-
-/* ===== QUESTIONS ===== */
 document.getElementById("code1").innerText =
 `#include <iostream>
 using namespace std;
@@ -213,12 +183,109 @@ using namespace std;
 
 int main() {
     int sum = 0;
+    sum = 1 + 2 + 3 + 4 + 5;
+    cout << sum;
+    return 0;
+}`;
+
+}
+
+else if(level === "medium"){
+
+document.getElementById("code1").innerText =
+`#include <iostream>
+using namespace std;
+
+int main() {
+    int x = 5
+    cout << x;
+    return 0;
+}`;
+
+document.getElementById("code2").innerText =
+`#include <iostream>
+using namespace std;
+
+int main() {
+    int sum = 0;
     for(int i = 1; i <= 5; i++){
         sum = i;
     }
     cout << sum;
     return 0;
 }`;
+
+}
+
+else if(level === "hard"){
+
+document.getElementById("code1").innerText =
+`#include <iostream>
+using namespace std;
+
+int main() {
+    for(int i = 0 i < 5; i++){
+        cout << i << endl;
+    }
+    return 0;
+}`;
+
+document.getElementById("code2").innerText =
+`#include <iostream>
+using namespace std;
+
+int main() {
+    int arr[3] = {1,2,3};
+    cout << arr[3];
+    return 0;
+}`;
+
+}
+
+}
+
+/* ===== CHECK ===== */
+function normalize(t){
+return t.replace(/\s/g,'');
+}
+
+function check(){
+
+let a1 = normalize(document.getElementById("ans1").value);
+let a2 = normalize(document.getElementById("ans2").value);
+
+let ok = false;
+
+/* EASY */
+if(level==="easy"){
+ok =
+a1.includes('cout<<"HelloWorld";') &&
+a2.includes('sum=1+2+3+4+5');
+}
+
+/* MEDIUM */
+else if(level==="medium"){
+ok =
+a1.includes('intx=5;') &&
+a2.includes('sum+=i');
+}
+
+/* HARD */
+else if(level==="hard"){
+ok =
+a1.includes('for(inti=0;i<5;i++)') &&
+a2.includes('arr[2]');
+}
+
+/* RESULT */
+document.getElementById("overlay").style.display="flex";
+document.getElementById("finalText").innerHTML =
+ok ? "🎉 YOU WIN!" : "❌ TRY AGAIN";
+
+document.getElementById("finalText").style.color =
+ok ? "#22c55e" : "#ef4444";
+
+}
 
 </script>
 
