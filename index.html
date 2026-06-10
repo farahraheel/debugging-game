@@ -1,313 +1,368 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>C++ Debugging Master | Pro Edition</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C++ Debugging Master | Pro Terminal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Orbitron:wght@400;700&display=swap');
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Rajdhani:wght@500;700&display=swap');
+        :root {
+            --neon-green: #00ff41;
+            --dark-green: #003b00;
+            --bg-black: #050a05;
+            --glass-bg: rgba(0, 40, 0, 0.15);
+            --border-glow: 0 0 15px rgba(0, 255, 65, 0.2);
+        }
 
-:root {
-  --primary: #00ff41; /* أخضر الماتريكس الشهير */
-  --primary-glow: rgba(0, 255, 65, 0.3);
-  --bg-dark: #0a0b0d;
-  --card-bg: rgba(16, 18, 22, 0.9);
-  --border-color: rgba(0, 255, 65, 0.2);
-}
+        body {
+            margin: 0;
+            background-color: var(--bg-black);
+            color: white;
+            font-family: 'Fira Code', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-body {
-  margin: 0;
-  font-family: 'Rajdhani', sans-serif;
-  background-color: var(--bg-dark);
-  background-image: 
-    radial-gradient(circle at 50% 50%, #0d2b1a 0%, #0a0b0d 100%);
-  color: #e0e0e0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
+        /* تأثير الخلفية (Scanning Line) */
+        body::before {
+            content: " ";
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 255, 65, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0));
+            z-index: 100;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
 
-/* شاشة البداية */
-#startScreen {
-  position: fixed;
-  inset: 0;
-  background: var(--bg-dark);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-  border: 4px solid var(--primary);
-  margin: 10px;
-}
+        /* شاشة البداية */
+        #startScreen {
+            text-align: center;
+            z-index: 10;
+        }
 
-.logo {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 3px solid var(--primary);
-  box-shadow: 0 0 30px var(--primary-glow);
-  margin-bottom: 20px;
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+        .main-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            color: var(--neon-green);
+            text-shadow: 0 0 20px var(--neon-green);
+            margin-bottom: 40px;
+        }
 
-.logo:hover {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 0 50px var(--primary);
-}
+        .level-card-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
 
-.logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+        .btn-pro {
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 20px 40px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+        }
 
-h1 {
-  font-size: 3rem;
-  margin-bottom: 30px;
-  letter-spacing: 5px;
-  text-align: center;
-  color: var(--primary);
-  text-shadow: 0 0 15px var(--primary-glow);
-  text-transform: uppercase;
-}
+        .btn-pro:hover {
+            background: var(--neon-green);
+            color: black;
+            box-shadow: 0 0 30px var(--neon-green);
+        }
 
-.btn-group {
-  display: flex;
-  gap: 20px;
-}
+        /* الحاوية الرئيسية */
+        .game-container {
+            display: none;
+            width: 90%;
+            max-width: 900px;
+            background: var(--glass-bg);
+            border: 1px solid var(--neon-green);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: var(--border-glow);
+        }
 
-.levelBtn {
-  padding: 12px 30px;
-  border: 2px solid var(--primary);
-  background: transparent;
-  color: var(--primary);
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  font-family: 'Rajdhani', sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
+        .terminal-header {
+            border-bottom: 1px solid var(--neon-green);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.levelBtn:hover {
-  background: var(--primary);
-  color: #000;
-  box-shadow: 0 0 25px var(--primary);
-}
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            background-color: var(--neon-green);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
 
-/* الحاوية الرئيسية للعبة */
-.container {
-  display: none;
-  width: 95%;
-  max-width: 800px;
-  background: var(--card-bg);
-  padding: 40px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-  backdrop-filter: blur(10px);
-  margin: 20px 0;
-  position: relative;
-}
+        /* منطقة الأكواد */
+        .code-window {
+            background: rgba(0, 10, 0, 0.8);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
 
-.container::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--primary), transparent);
-}
+        .code-label {
+            background: var(--dark-green);
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            color: var(--neon-green);
+        }
 
-#lvTitle {
-  text-align: left;
-  color: var(--primary);
-  font-size: 1.8rem;
-  margin-top: 0;
-  border-left: 4px solid var(--primary);
-  padding-left: 15px;
-}
+        .code-display {
+            padding: 20px;
+            color: #ccc;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
 
-p {
-    color: #888;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 5px;
-}
+        textarea {
+            width: 100%;
+            background: rgba(0, 30, 0, 0.3);
+            border: 1px solid var(--dark-green);
+            color: var(--neon-green);
+            padding: 15px;
+            font-family: 'Fira Code', monospace;
+            resize: vertical;
+            outline: none;
+            margin-bottom: 10px;
+        }
 
-/* صندوق الكود */
-.code-box {
-  background: #050505;
-  padding: 20px;
-  border-radius: 4px;
-  font-family: 'Fira Code', monospace;
-  font-size: 0.95rem;
-  white-space: pre;
-  border-left: 4px solid #333;
-  margin: 5px 0 20px 0;
-  color: #d1d1d1;
-  overflow-x: auto;
-  box-shadow: inset 0 0 10px rgba(0,0,0,1);
-}
+        textarea:focus {
+            border-color: var(--neon-green);
+        }
 
-textarea {
-  width: 100%;
-  height: 80px;
-  background: #0f1115;
-  border: 1px solid #222;
-  color: var(--primary);
-  border-radius: 4px;
-  padding: 15px;
-  box-sizing: border-box;
-  margin-bottom: 20px;
-  font-family: 'Fira Code', monospace;
-  outline: none;
-  transition: border 0.3s;
-}
+        .action-bar {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
 
-textarea:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 10px rgba(0, 255, 65, 0.1);
-}
+        /* لوحة التحكم (Admin Panel) */
+        #adminPanel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
 
-.submitBtn {
-  margin-top: 10px;
-  width: 100%;
-  background: var(--primary);
-  border: none;
-  padding: 18px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  color: #000;
-  font-size: 1.1rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  transition: 0.3s;
-}
+        #editModal {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 600px;
+            background: #111;
+            border: 2px solid white;
+            padding: 20px;
+            z-index: 2000;
+        }
 
-.submitBtn:hover {
-  filter: brightness(1.2);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 20px var(--primary-glow);
-}
+        .edit-input {
+            width: 100%;
+            margin-bottom: 10px;
+            background: #222;
+            color: white;
+            border: 1px solid #444;
+            padding: 8px;
+        }
 
-/* الشاشة النهائية */
-#overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.95);
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 200;
-}
+        /* الشاشة النهائية */
+        #overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
+        }
 
-#finalText {
-  font-size: 4rem;
-  text-align: center;
-  margin-bottom: 30px;
-  font-weight: 700;
-}
+        .win-text { color: var(--neon-green); font-size: 3rem; text-shadow: 0 0 20px var(--neon-green); }
+        .fail-text { color: #ff3e3e; font-size: 3rem; text-shadow: 0 0 20px #ff3e3e; }
 
-/* لمسات إضافية */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
-</style>
+    </style>
 </head>
-
 <body>
 
-<div id="startScreen">
-  <div class="logo">
-    <img src="IMG_5131.JPG" alt="Logo">
-  </div>
-  <h1>C++ Debugger Master</h1>
-  <div class="btn-group">
-    <button class="levelBtn" onclick="startGame('easy')">Level: Easy</button>
-    <button class="levelBtn" onclick="startGame('medium')">Level: Medium</button>
-    <button class="levelBtn" onclick="startGame('hard')">Level: Hard</button>
-  </div>
-</div>
+    <!-- شاشة البداية -->
+    <div id="startScreen">
+        <h1 class="main-title">TERMINAL ERROR_404</h1>
+        <div class="level-card-container">
+            <button class="btn-pro" onclick="startGame('easy')">Easy.sys</button>
+            <button class="btn-pro" onclick="startGame('medium')">Medium.sys</button>
+            <button class="btn-pro" onclick="startGame('hard')">Hard.sys</button>
+        </div>
+        <p style="margin-top: 50px; color: #444;">Click the gear icon below to modify content</p>
+    </div>
 
-<div class="container" id="game">
-  <h2 id="lvTitle">Level</h2>
-  
-  <p>// Syntax Error:</p>
-  <div class="code-box" id="code1"></div>
-  <textarea id="ans1" placeholder="Fix the code here..."></textarea>
-  
-  <p>// Logic Error:</p>
-  <div class="code-box" id="code2"></div>
-  <textarea id="ans2" placeholder="Fix the logic here..."></textarea>
-  
-  <button class="submitBtn" onclick="check()">COMPILE & EXECUTE</button>
-</div>
+    <!-- منطقة اللعب -->
+    <div class="game-container" id="gameScreen">
+        <div class="terminal-header">
+            <span id="lvTitle">> ACCESSING LEVEL...</span>
+            <div>
+                <span class="status-dot"></span>
+                <span style="font-size: 0.8rem; margin-left: 5px;">SYSTEM ACTIVE</span>
+            </div>
+        </div>
 
-<div id="overlay">
-  <h1 id="finalText"></h1>
-  <button class="levelBtn" onclick="location.reload()">RESTART SYSTEM</button>
-</div>
+        <div class="code-window">
+            <div class="code-label">TASK_01: SYNTAX_ERROR</div>
+            <div class="code-display" id="code1Display"></div>
+        </div>
+        <textarea id="ans1" placeholder="// Input correct line here..."></textarea>
 
-<script>
-// الكود البرمجي لم يتغير لضمان استمرار الخدمة كما هي
-let level="easy";
+        <div class="code-window">
+            <div class="code-label">TASK_02: LOGIC_GLITCH</div>
+            <div class="code-display" id="code2Display"></div>
+        </div>
+        <textarea id="ans2" placeholder="// Input logical fix here..."></textarea>
 
-function startGame(lv){
-  level=lv;
-  document.getElementById("startScreen").style.display="none";
-  document.getElementById("game").style.display="block";
-  document.getElementById("lvTitle").innerText = "> SYSTEM.LEVEL_" + lv.toUpperCase();
-  loadLevel();
-}
+        <div class="action-bar">
+            <button class="btn-pro" style="flex: 2;" onclick="checkAnswers()">Execute Script</button>
+            <button class="btn-pro" style="flex: 1; border-color: #555; color: #555;" onclick="location.reload()">Abort</button>
+        </div>
+    </div>
 
-function loadLevel(){
-  if(level==="easy"){
-    document.getElementById("code1").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int x = 10\n    cout << x;\n    return 0;\n}`;
-    document.getElementById("code2").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int age = 20;\n    if(age > 20) cout << "Adult";\n    else cout << "Child";\n    return 0;\n}`;
-  }
-  else if(level==="medium"){
-    document.getElementById("code1").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int x = 5\n    cout << x;\n    return 0;\n}`;
-    document.getElementById("code2").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int sum = 0;\n    for(int i = 1; i <= 5; i++){\n        sum = i;\n    }\n    cout << sum;\n    return 0;\n}`;
-  }
-  else{
-    document.getElementById("code1").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    for(int i = 0 i < 5; i++){\n        cout << i << endl;\n    }\n    return 0;\n}`;
-    document.getElementById("code2").innerText = `#include <iostream>\nusing namespace std;\nint main() {\n    int arr[3] = {1,2,3};\n    cout << arr[3];\n    return 0;\n}`;
-  }
-}
+    <!-- لوحة التحكم (Admin) -->
+    <div id="adminPanel">
+        <button class="btn-pro" style="padding: 10px; font-size: 0.7rem;" onclick="toggleEditModal()">⚙ EDIT CONTENT</button>
+    </div>
 
-function normalize(t){ return t.replace(/\s/g,'').toLowerCase(); }
+    <!-- نافذة تعديل المحتوى -->
+    <div id="editModal">
+        <h3>Edit Level Content</h3>
+        <select id="editLevelSelect" onchange="loadLevelToEdit()" class="edit-input">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+        </select>
+        <label>Syntax Code:</label>
+        <textarea id="editCode1" class="edit-input" style="height: 60px;"></textarea>
+        <label>Expected Syntax Fix (KeyWord):</label>
+        <input type="text" id="editAns1" class="edit-input">
+        
+        <label>Logic Code:</label>
+        <textarea id="editCode2" class="edit-input" style="height: 60px;"></textarea>
+        <label>Expected Logic Fix (KeyWord):</label>
+        <input type="text" id="editAns2" class="edit-input">
+        
+        <button class="btn-pro" onclick="saveEdits()">SAVE SYSTEM CHANGES</button>
+        <button class="btn-pro" style="border-color: red;" onclick="toggleEditModal()">CANCEL</button>
+    </div>
 
-function check(){
-  let a1 = normalize(document.getElementById("ans1").value);
-  let a2 = normalize(document.getElementById("ans2").value);
-  let ok=false;
+    <!-- شاشة النتيجة -->
+    <div id="overlay">
+        <h1 id="finalText"></h1>
+        <p id="finalSubText"></p>
+        <button class="btn-pro" onclick="location.reload()">Return to Source</button>
+    </div>
 
-  if(level==="easy"){ 
-    ok = a1.includes("intx=10;") && (a2.includes("age>=20") || a2.includes("age>19")); 
-  }
-  else if(level==="medium"){ 
-    ok = a1.includes("intx=5;") && a2.includes("sum+=i"); 
-  }
-  else{ 
-    ok = a1.includes("i=0;i<5") && a2.includes("arr[2]"); 
-  }
+    <script>
+        // نظام تخزين البيانات (Levels Data)
+        let defaultData = {
+            easy: {
+                code1: "#include <iostream>\nusing namespace std;\nint main() {\n    int x = 10\n    cout << x;\n    return 0;\n}",
+                ans1: "intx=10;",
+                code2: "// Correct the condition so 20 is Adult\nif(age > 20) cout << \"Adult\";\nelse cout << \"Child\";",
+                ans2: "age>=20"
+            },
+            medium: {
+                code1: "int x = 5\ncout << x;",
+                ans1: "intx=5;",
+                code2: "// Fix loop to sum all numbers\nfor(int i=1; i<=5; i++){\n   sum = i;\n}",
+                ans2: "sum+=i"
+            },
+            hard: {
+                code1: "for(int i=0 i<5; i++)",
+                ans1: "i=0;i<5",
+                code2: "// Accessing last element of array[3]\ncout << arr[3];",
+                ans2: "arr[2]"
+            }
+        };
 
-  document.getElementById("overlay").style.display="flex";
-  document.getElementById("finalText").innerText = ok ? "✓ ACCESS GRANTED" : "✗ ACCESS DENIED";
-  document.getElementById("finalText").style.color = ok ? "#00ff41" : "#ff3e3e";
-}
-</script>
+        // تحميل البيانات من الذاكرة المحلية أو استخدام الافتراضية
+        let gameData = JSON.parse(localStorage.getItem('debugGameData')) || defaultData;
 
+        let currentLevel = 'easy';
+
+        function startGame(lv) {
+            currentLevel = lv;
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            document.getElementById('lvTitle').innerText = `> EXECUTING_LEVEL: ${lv.toUpperCase()}`;
+            
+            document.getElementById('code1Display').innerText = gameData[lv].code1;
+            document.getElementById('code2Display').innerText = gameData[lv].code2;
+        }
+
+        function checkAnswers() {
+            let a1 = document.getElementById('ans1').value.replace(/\s/g,'').toLowerCase();
+            let a2 = document.getElementById('ans2').value.replace(/\s/g,'').toLowerCase();
+            
+            let isOk = a1.includes(gameData[currentLevel].ans1.toLowerCase()) && 
+                       a2.includes(gameData[currentLevel].ans2.toLowerCase());
+
+            showResult(isOk);
+        }
+
+        function showResult(win) {
+            document.getElementById('overlay').style.display = 'flex';
+            const txt = document.getElementById('finalText');
+            if(win) {
+                txt.innerText = "ACCESS GRANTED";
+                txt.className = "win-text";
+                document.getElementById('finalSubText').innerText = "System vulnerabilities patched successfully.";
+            } else {
+                txt.innerText = "ACCESS DENIED";
+                txt.className = "fail-text";
+                document.getElementById('finalSubText').innerText = "Trace detected. Syntax/Logic errors remain.";
+            }
+        }
+
+        // وظائف لوحة التحكم
+        function toggleEditModal() {
+            const m = document.getElementById('editModal');
+            m.style.display = (m.style.display === 'block') ? 'none' : 'block';
+            loadLevelToEdit();
+        }
+
+        function loadLevelToEdit() {
+            const lv = document.getElementById('editLevelSelect').value;
+            document.getElementById('editCode1').value = gameData[lv].code1;
+            document.getElementById('editAns1').value = gameData[lv].ans1;
+            document.getElementById('editCode2').value = gameData[lv].code2;
+            document.getElementById('editAns2').value = gameData[lv].ans2;
+        }
+
+        function saveEdits() {
+            const lv = document.getElementById('editLevelSelect').value;
+            gameData[lv].code1 = document.getElementById('editCode1').value;
+            gameData[lv].ans1 = document.getElementById('editAns1').value;
+            gameData[lv].code2 = document.getElementById('editCode2').value;
+            gameData[lv].ans2 = document.getElementById('editAns2').value;
+
+            localStorage.setItem('debugGameData', JSON.stringify(gameData));
+            alert("SYSTEM UPDATED: Content Saved to Local Storage.");
+            toggleEditModal();
+        }
+    </script>
 </body>
 </html>
