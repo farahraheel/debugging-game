@@ -1,143 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>C++ Debugging Game</title>
 
 <style>
-:root{
-  --primary:#00f5ff;
-  --secondary:#a855f7;
-  --bg:#050816;
+:root {
+    --primary: #00f5ff;
+    --secondary: #a855f7;
+    --bg: #050816;
 }
 
-body{
-  margin:0;
-  font-family: Arial, sans-serif;
-  background: radial-gradient(circle,#0b1023,#050816);
-  color:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh;
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
 
-/* ===== START SCREEN ===== */
-#startScreen{
-  position:fixed;
-  width:100%;
-  height:100%;
-  background: radial-gradient(circle,#1a1f35,#050816);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
+/* START */
+#startScreen {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, #1a1f35, #050816);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
-.logo{
-  width:130px;
-  height:130px;
-  border-radius:50%;
-  overflow:hidden;
-  border:3px solid var(--primary);
-  box-shadow:0 0 25px rgba(0,245,255,0.4);
-  margin-bottom:20px;
+.logo-placeholder {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    margin-bottom: 20px;
+    overflow: hidden;
 }
 
-.logo img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
+.logo-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.levelBtn{
-  width:170px;
-  padding:14px 0;
-  margin:10px;
-  border:none;
-  border-radius:14px;
-  cursor:pointer;
-  font-weight:bold;
-  font-size:16px;
-  background:linear-gradient(90deg,var(--primary),var(--secondary));
-  color:white;
-  box-shadow:0 0 18px rgba(0,245,255,0.25);
+.levelBtn {
+    padding: 12px 25px;
+    margin: 8px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    color: white;
 }
 
-.levelBtn:hover{
-  transform:scale(1.07);
+/* GAME */
+.container {
+    display: none;
+    width: 90%;
+    max-width: 850px;
+    background: rgba(11, 16, 35, 0.85);
+    padding: 30px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
 }
 
-/* ===== GAME ===== */
-.container{
-  display:none;
-  width:92%;
-  max-width:900px;
-  background:rgba(255,255,255,0.06);
-  backdrop-filter: blur(20px);
-  border:1px solid rgba(255,255,255,0.1);
-  padding:35px;
-  border-radius:25px;
+.code-box {
+    background: #000;
+    padding: 15px;
+    border-radius: 10px;
+    font-family: monospace;
+    white-space: pre;
+    border-left: 4px solid var(--primary);
+    margin-bottom: 10px;
 }
 
-.code-box{
-  background:#000;
-  padding:15px;
-  border-radius:10px;
-  font-family: Consolas;
-  white-space:pre;
-  text-align:left;
-  border-left:4px solid var(--primary);
-  margin-bottom:10px;
+textarea {
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #1a1f35;
+    color: white;
+    border: none;
+    border-radius: 8px;
 }
 
-textarea{
-  width:100%;
-  height:90px;
-  padding:10px;
-  margin-bottom:10px;
-  background:#1a1f35;
-  border:none;
-  color:white;
-  border-radius:10px;
-}
-
-/* BUTTON */
-button{
-  width:100%;
-  padding:16px;
-  border:none;
-  border-radius:14px;
-  cursor:pointer;
-  background:linear-gradient(90deg,var(--primary),var(--secondary));
-  color:white;
-  font-size:18px;
-  font-weight:bold;
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 /* RESULT */
-#overlay{
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.85);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
+#overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
-
-.resultBox{
-  padding:40px;
-  border-radius:20px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.2);
-}
-
-.win{color:#22c55e;font-size:30px;}
-.lose{color:#ef4444;font-size:30px;}
 
 </style>
 </head>
@@ -147,15 +126,15 @@ button{
 <!-- START -->
 <div id="startScreen">
 
-  <div class="logo">
-    <img src="IMG_5131.JPG">
-  </div>
+    <div class="logo-placeholder">
+        <img src="IMG_5131.JPG">
+    </div>
 
-  <h1>C++ Debugging Game</h1>
+    <h1>C++ Debugging Game</h1>
 
-  <button class="levelBtn" onclick="startGame('easy')">Easy</button>
-  <button class="levelBtn" onclick="startGame('medium')">Medium</button>
-  <button class="levelBtn" onclick="startGame('hard')">Hard</button>
+    <button class="levelBtn" onclick="startGame('easy')">Easy</button>
+    <button class="levelBtn" onclick="startGame('medium')">Medium</button>
+    <button class="levelBtn" onclick="startGame('hard')">Hard</button>
 
 </div>
 
@@ -178,12 +157,7 @@ button{
 
 <!-- RESULT -->
 <div id="overlay">
-  <div class="resultBox">
-    <div id="finalText"></div>
-    <button onclick="location.reload()" style="margin-top:20px;width:200px;">
-      Play Again
-    </button>
-  </div>
+    <h1 id="finalText"></h1>
 </div>
 
 <script>
@@ -191,13 +165,13 @@ button{
 let level="easy";
 
 function startGame(lv){
-  level=lv;
-  document.getElementById("startScreen").style.display="none";
-  document.getElementById("game").style.display="block";
-  loadLevel();
+    level=lv;
+    document.getElementById("startScreen").style.display="none";
+    document.getElementById("game").style.display="block";
+    loadLevel();
 }
 
-/* ================= LEVELS ================= */
+/* LEVELS */
 function loadLevel(){
 
 if(level==="easy"){
@@ -275,7 +249,7 @@ int main() {
 }
 }
 
-/* ================= CHECK ================= */
+/* CHECK */
 function normalize(t){
 return t.replace(/\s/g,'').toLowerCase();
 }
@@ -308,10 +282,13 @@ a1.includes("for(inti=0;i<5;i++)") &&
 a2.includes("arr[2]");
 }
 
+/* RESULT */
 document.getElementById("overlay").style.display="flex";
-document.getElementById("finalText").className = ok ? "win":"lose";
-document.getElementById("finalText").innerHTML =
+document.getElementById("finalText").innerText =
 ok ? "🎉 YOU WIN!" : "❌ TRY AGAIN";
+
+document.getElementById("finalText").style.color =
+ok ? "#22c55e" : "#ef4444";
 
 }
 
